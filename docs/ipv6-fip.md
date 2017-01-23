@@ -321,7 +321,7 @@ In the following example:
 
 #### Ingress packets
 
-1. An packet, [IP6{src=3001::1,dst=2001::1}/Payload] enters eth0.
+1. An packet, **[IP6{src=3001::1,dst=2001::1}/Payload]** enters eth0.
 2. The packet enters OVS.
   * OVS matches the packet against the ipv6 flow, forwards to VPP.
 3. The packet enters ip6 lookup node in VPP.
@@ -331,15 +331,15 @@ In the following example:
    belongs to the tenant with VRF 12
   * ip6-fip64 allocates 100.64.0.1 from the IP4 source range.
   * the packet is rewritten as
-    [IP4{src=100.64.0.1,dst=192.168.0.1}/Payload].
-  * the TX vrf is set to 12
-  * the packet is sent to ip4-lookup
+    **[IP4{src=100.64.0.1,dst=192.168.0.1}/Payload]**.
+  * the TX vrf is set to 12.
+  * the packet is sent to ip4-lookup.
 5. ip4-lookup does a lookup for the packet in VRF 12.
   * It finds an adjecency that sends the packet to a bridge domain
     which contains a vxlan interface configured with tunnel 345.
 6. vxlan adds a vxlan header to the packet
   * Packet now looks like
-    [IP4{src=169.254.124.1,dst=169.254.124.2}/UDP{src=5231,dst=5231}/VXLan{VNI=345}/IP4{src=10.0.0.1,dst=192.168.0.1}/Payload].
+    **[IP4{src=169.254.124.1,dst=169.254.124.2}/UDP{src=5231,dst=5231}/VXLan{VNI=345}/IP4{src=10.0.0.1,dst=192.168.0.1}/Payload]**.
   * vxlan forwards the packet to ip4-lookup, with TX vrf set to 1
 7. ip4-lookup finds an adjacency for 169.254.124.2, since downlink-vpp
    is on vrf 1
@@ -350,8 +350,8 @@ In the following example:
 9. OVS cannot match the packet to any flow.
   * The packet is sent to the upcall handler.
 10. The midonet agent receives the packet.
-  * The flow match contains TunnelKey{tunnelid=345,
-    ip4src=169.254.124.1, ip4dst=169.254.124.2}
+  * The flow match contains
+    TunnelKey{tunnelid=345, ip4src=169.254.124.1, ip4dst=169.254.124.2}.
   * The agent uses the tunnelid to find the port on the tenant router
     from which simulation should start.
 11. The agent starts simulation of the packet from the port.
@@ -362,7 +362,7 @@ In the following example:
 1. Normal simulation has occurred to the point where the packet enters
    the tenant router.
   * The packet is currently
-    [IP4{src=192.168.0.1,dst=10.0.0.1}/Payload]
+    **[IP4{src=192.168.0.1,dst=10.0.0.1}/Payload]**.
 2. The packet matches the route for 100.64.0.0/10 and is sent to the
    route's port.
 3. The port has a list of all gateway hosts with active ipv6 uplink
@@ -371,7 +371,7 @@ In the following example:
     tunnel.
   * The tunnel key used is the tenant router VNI.
   * Packet is
-    [IP4{src=172.16.124.2,dst=172.16.124.1}/UDP{src=6677,dst=6677}/VXLan{VNI=345}/IP4{src=192.168.0.1,dst=100.64.0.1}/Payload].
+    **[IP4{src=172.16.124.2,dst=172.16.124.1}/UDP{src=6677,dst=6677}/VXLan{VNI=345}/IP4{src=192.168.0.1,dst=100.64.0.1}/Payload]**.
   * 6677 is vxlan_overlay_udp_port in agent config.
 4. The packet arrives at the gateway host.
   * It enters OVS through the vxlan overlay port.
@@ -387,7 +387,7 @@ In the following example:
     & Output{Port=7}.
   * The packet is executed with the same action.
   * The packet now appears as:
-    [IP4{src=169.254.124.2,dst=169.254.124.1}/UDP{src=5231,dst=5231}/VXLan{VNI=345}/IP4{src=192.168.0.1,dst=100.64.0.1}/Payload].
+    **[IP4{src=169.254.124.2,dst=169.254.124.1}/UDP{src=5231,dst=5231}/VXLan{VNI=345}/IP4{src=192.168.0.1,dst=100.64.0.1}/Payload]**.
 7. The packet traverses the 5231 tunnel port and enters the kernel.
   * The kernel forwards the packet to 169.254.124.1 via downlink-tun.
   * The packets enter VPP.
@@ -395,13 +395,13 @@ In the following example:
   * vxlan sees that the VNI is 345, so sets the TX vrf to 12.
   * vxlan strips off the vxlan headers.
   * The packet now looks like
-    [IP4{src=192.168.0.1,dst=100.64.0.1}/Payload].
+    **[IP4{src=192.168.0.1,dst=100.64.0.1}/Payload]**.
   * vxlan forwards the packet to a bvi loopback device, which passes
     it to ip4-lookup.
 9. ip4-lookup forwards the packet to ip4-fip64.
 10. ip4-fip64, using the vrf and packet parameters, translates the
     packet to ip6.
-  * The packet now looks like [IP6{src=2001::1,dst=3001::1}/Payload].
+  * The packet now looks like **[IP6{src=2001::1,dst=3001::1}/Payload]**.
   * The packet is sent out the uplink interface, eth0.
 
 ### State sharing
